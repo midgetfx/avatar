@@ -21,12 +21,12 @@ $('body').on('DOMSubtreeModified', '#result', function(){
         return
     }
     console.log(message);
-    updateVideo('{"src":"/kangcar/'+ message +'.mp4", "type":"video/mp4"}');
+    updateVideo('{"src":"/avatar/kangcar/'+ message +'.mp4", "type":"video/mp4"}');
 });
 
 /* video */
 var avatarVideo = videojs('avatar-video');
-var listen_video = '{"src":"/kangcar/01.mp4", "type":"video/mp4"}';
+var listen_video = '{"src":"/avatar/kangcar/01.mp4", "type":"video/mp4"}';
 
 function updateVideo(source) {
     soruce = JSON.parse(source)
