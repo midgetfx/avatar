@@ -13,6 +13,12 @@ $('#speaking').on('mouseup', function(e) {
     console.log('voice recognition stopped');
 });
 
+$('#speaking').on('tap', function(e) {
+    mic.click();
+    console.log('voice recognition tap');
+});
+
+
 var is_response_msg = false
 $('body').on('DOMSubtreeModified', '#result', function(){
     is_response_msg = !is_response_msg
