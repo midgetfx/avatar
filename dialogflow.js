@@ -21,7 +21,7 @@ $('body').on('DOMSubtreeModified', '#result', function(){
         return
     }
     console.log(message);
-    updateVideo(message)
+    updateVideo('{"src":"/kangcar/'+ message +'.mp4", "type":"video/mp4"}');
 });
 
 /* video */
