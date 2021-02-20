@@ -2,20 +2,29 @@
 /* Dialogflow */
 mic = $('#mic');
 
-$('#speaking').on('mousedown', function(e) {
+$('#avatar-video').on('mousedown', function(e) {
     console.log('voice recognition started');
     mic.click();
+
+    setTimeout(function() {
+        mic.click();
+        console.log('voice recognition stopped');
+    }, 6000);
 });
 
 
-$('#speaking').on('mouseup', function(e) {
-    mic.click();
-    console.log('voice recognition stopped');
-});
+// $('#speaking').on('mouseup', function(e) {
+//     mic.click();
+//     console.log('voice recognition stopped');
+// });
 
-$('#speaking').on('tap', function(e) {
+$('#avatar-video').on('tap', function(e) {
+    console.log('voice recognition started');
     mic.click();
-    console.log('voice recognition tap');
+    setTimeout(function() {
+        mic.click();
+        console.log('voice recognition stopped');
+    }, 6000);
 });
 
 
@@ -27,12 +36,12 @@ $('body').on('DOMSubtreeModified', '#result', function(){
         return
     }
     console.log(message);
-    updateVideo('{"src":"/avatar/kangcar/'+ message +'.mp4", "type":"video/mp4"}');
+    updateVideo('{"src":"/avatar/kangcar/'+ message +'.webm", "type":"video/webm"}');
 });
 
 /* video */
 var avatarVideo = videojs('avatar-video');
-var listen_video = '{"src":"/avatar/kangcar/01.mp4", "type":"video/mp4"}';
+var listen_video = '{"src":"/avatar/kangcar/01.webm", "type":"video/webm"}';
 
 function updateVideo(source) {
     soruce = JSON.parse(source)
