@@ -17,7 +17,7 @@ $('#avatar-video').on('mousedown', function(e) {
 });
 
 
-$('#speaking').on('mouseup', function(e) {
+$('#avatar-video').on('mouseup', function(e) {
     mic.click();
     console.log('voice recognition stopped');
     saying = false;
