@@ -23,14 +23,14 @@ $('#avatar-video').on('mouseup', function(e) {
     saying = false;
 });
 
-$('#avatar-video').on('tap', function(e) {
-    console.log('voice recognition started');
-    mic.click();
-    setTimeout(function() {
-        mic.click();
-        console.log('voice recognition stopped');
-    }, 6000);
-});
+// $('#avatar-video').on('tap', function(e) {
+//     console.log('voice recognition started');
+//     mic.click();
+//     setTimeout(function() {
+//         mic.click();
+//         console.log('voice recognition stopped');
+//     }, 6000);
+// });
 
 
 var is_response_msg = false
