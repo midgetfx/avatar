@@ -80,14 +80,12 @@ recognition.onerror = function(event) {
 ------------------------------*/
 
 $('#start-record-btn').on('mousedown', function(e) {
-  e.preventDefault();
   console.log('voice recognition started');
   recognition.start();
 });
 
 
 $('#start-record-btn').on('mouseup', function(e) {
-  e.preventDefault();
   recognition.stop();
   console.log('voice recognition stopped');
 

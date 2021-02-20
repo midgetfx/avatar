@@ -1,3 +1,9 @@
+try {
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var recognition = new SpeechRecognition();
+} catch(e) {
+    console.error(e);
+}
 
 /* Dialogflow */
 mic = $('#mic');
