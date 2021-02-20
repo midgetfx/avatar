@@ -1,22 +1,27 @@
 
 /* Dialogflow */
 mic = $('#mic');
+saying = false;
 
 $('#avatar-video').on('mousedown', function(e) {
     console.log('voice recognition started');
     mic.click();
-
-    setTimeout(function() {
-        mic.click();
-        console.log('voice recognition stopped');
-    }, 6000);
+    saying = true;
+    // setTimeout(function() {
+    //     if(saying) {
+    //         mic.click();
+    //         saying = false;
+    //         console.log('voice recognition stopped');
+    //     }
+    // }, 6000);
 });
 
 
-// $('#speaking').on('mouseup', function(e) {
-//     mic.click();
-//     console.log('voice recognition stopped');
-// });
+$('#speaking').on('mouseup', function(e) {
+    mic.click();
+    console.log('voice recognition stopped');
+    saying = false;
+});
 
 $('#avatar-video').on('tap', function(e) {
     console.log('voice recognition started');
