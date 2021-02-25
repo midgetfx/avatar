@@ -2,35 +2,35 @@
 is_mobile = false;
 if( /Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     is_mobile = true;
+    console.log('you are in a mobile');
 }
 
 mic = $('#mic');
 
 vodeo_player = $('#avatar-video');
 speaking = $('#speaking');
+saying = false;
 
 speaking.on('mousedown', function(e) {
-    if(is_mobile)   return;
+    if(saying)   return;
     console.log('voice recognition started');
+    saying = true;
     mic.click();
+
+    if(!is_mobile)   return;
+    setTimeout(function() {
+        mic.click();
+        saying = false;
+        console.log('voice recognition stopped with timeout');
+    }, 6000);
 });
 
 
 speaking.on('mouseup', function(e) {
-    if(is_mobile)   return;
+    if(is_mobile || !saying)   return;
+    saying = false;
     mic.click();
     console.log('voice recognition stopped');
-});
-
-speaking.on('tap', function(e) {
-    if(!is_mobile)   return;
-    console.log('voice recognition started');
-    mic.click();
-    setTimeout(function() {
-        mic.click();
-        saying = false;
-        console.log('voice recognition stopped');
-    }, 6000);
 });
 
 
