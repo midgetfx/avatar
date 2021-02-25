@@ -1,42 +1,37 @@
-try {
-    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    var recognition = new SpeechRecognition();
-} catch(e) {
-    console.error(e);
+/* Dialogflow */
+is_mobile = false;
+if( /Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+    is_mobile = true;
 }
 
-/* Dialogflow */
 mic = $('#mic');
-saying = false;
 
-$('#avatar-video').on('mousedown', function(e) {
+vodeo_player = $('#avatar-video');
+speaking = $('#speaking');
+
+speaking.on('mousedown', function(e) {
+    if(is_mobile)   return;
     console.log('voice recognition started');
     mic.click();
-    saying = true;
-    // setTimeout(function() {
-    //     if(saying) {
-    //         mic.click();
-    //         saying = false;
-    //         console.log('voice recognition stopped');
-    //     }
-    // }, 6000);
 });
 
 
-$('#avatar-video').on('mouseup', function(e) {
+speaking.on('mouseup', function(e) {
+    if(is_mobile)   return;
     mic.click();
     console.log('voice recognition stopped');
-    saying = false;
 });
 
-// $('#avatar-video').on('tap', function(e) {
-//     console.log('voice recognition started');
-//     mic.click();
-//     setTimeout(function() {
-//         mic.click();
-//         console.log('voice recognition stopped');
-//     }, 6000);
-// });
+speaking.on('tap', function(e) {
+    if(!is_mobile)   return;
+    console.log('voice recognition started');
+    mic.click();
+    setTimeout(function() {
+        mic.click();
+        saying = false;
+        console.log('voice recognition stopped');
+    }, 6000);
+});
 
 
 var is_response_msg = false
