@@ -35,7 +35,7 @@ function speech_to_text() {
         var resText = event.results[0][0].transcript;
         console.log('You said: ', resText);
         // text_to_speech(resText);
-        if(resText.includes("작가님")){
+        if(resText.includes("작가")){
             console.log('Asking is triggered: ', resText);
             stop();
             updateVideo("02");
@@ -97,7 +97,7 @@ function ask_question() {
 
 var is_response_msg = false
 $('body').on('DOMSubtreeModified', '#result', function(){
-    // is_response_msg = !is_response_msg
+    is_response_msg = !is_response_msg
     message = $('.server-response').last().text();
     if(message.trim() === '' || message === '...' || is_response_msg) {
         return
