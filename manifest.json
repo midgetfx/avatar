@@ -1,0 +1,14 @@
+{
+  "short_name": "KangCar's Avatar",
+  "name": "KangCar's Avatar",
+  "icons": [
+    {
+      "src": "image_1.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/mobile.html",
+  "display": "standalone",
+  "orientation": "landscape"
+}

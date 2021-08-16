@@ -1,117 +1,151 @@
+//VIDEO INFO
+video_info = null;
+$.getJSON( "kangcar/video_info.json", function( json ) {
+    console.log( "JSON Data: " + json['02']);
+    video_info = json;
+});
+
 try {
-  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  var recognition = new SpeechRecognition();
+    var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+} catch (e) {
+    console.error(e);
 }
-catch(e) {
-  console.error(e);
-  $('.no-browser-support').show();
-  $('.app').hide();
-}
+recognition.lang = 'ko-KR';
+recognition.interimResults = false;
+recognition.maxAlternatives = 5;
+//recognition.continuous = true;
 
-// var instructions = $('#recording-instructions');
-var content = '';
-var inputQuery = $('#query');
+var button = document.querySelector("#speech");
+is_calling = false;
+function speech_to_text() {
+    recognition.start();
+    is_calling = true;
 
-var enterkey = jQuery.Event("keydown");
-enterkey.which = 13; //choose the one you want
-enterkey.keyCode = 13;
+    recognition.onstart = function () {
+        console.log("음성인식이 시작 되었습니다. 이제 마이크에 무슨 말이든 하세요.")
+        button.innerHTML = "Listening...";
+        button.disabled = true;
+    }
 
+    recognition.onspeechend = function () {
+        button.disabled = false;
+        button.innerHTML = "Start STT";
+    }
+    recognition.onresult = function (event) {
+        var resText = event.results[0][0].transcript;
+        console.log('You said: ', resText);
+        // text_to_speech(resText);
+        if(resText.includes("작가님")){
+            console.log('Asking is triggered: ', resText);
+            stop();
+            updateVideo("02");
+            ask_question();
+        }
 
-/*-----------------------------
-      Voice Recognition 
-------------------------------*/
-
-// If false, the recording will stop after a few seconds of silence.
-// When true, the silence period is longer (about 15 seconds),
-// allowing us to keep recording even when the user pauses. 
-recognition.continuous = true;
-
-// This block is called every time the Speech APi captures a line. 
-recognition.onresult = function(event) {
-
-  // event is a SpeechRecognitionEvent object.
-  // It holds all the lines we have captured so far. 
-  // We only need the current one.
-  var current = event.resultIndex;
-
-  // Get a transcript of what was said.
-  var transcript = event.results[current][0].transcript;
-
-  // Add the current transcript to the contents of our Note.
-  // There is a weird bug on mobile, where everything is repeated twice.
-  // There is no official solution so far so we have to handle an edge case.
-  var mobileRepeatBug = (current == 1 && transcript == event.results[0][0].transcript);
-
-  if(!mobileRepeatBug) {
-    content = transcript;
-    inputQuery.val(content);
-      inputQuery.focus();
-      // inputQuery.trigger(enterkey);
-      console.log(inputQuery.val() +' ---');
-      var e = jQuery.Event("keypress");
-      e.which = 13
-      e.keyCode = 13
-      inputQuery.focus();
-      inputQuery.trigger(e);
-      // var e = jQuery.Event( "keydown", { keyCode: 13 } );
-      //
-      // inputQuery.trigger(e);
-    console.log('stt messgage:' + content);
-  }
-};
-
-recognition.onstart = function() { 
-    console.log('Voice recognition activated. Try speaking into the microphone.');
-}
-
-recognition.onspeechend = function() {
-    console.log('You were quiet for a while so voice recognition turned itself off.');
-}
-
-recognition.onerror = function(event) {
-    if(event.error == 'no-speech') {
-        console.log('No speech was detected. Try again.');
+    };
+    recognition.onend = function () {
+        button.disabled = false;
+        button.innerHTML = "Start STT";
+        is_calling = false;
+        if (!is_asking) {
+            speech_to_text();
+        }
     }
 }
 
+function stop() {
+    recognition.stop();
+    button.disabled = false;
+    button.innerHTML = "Start STT";
+    is_calling = false;
+}
 
-/*-----------------------------
-      App buttons and input 
-------------------------------*/
-
-$('#start-record-btn').on('mousedown', function(e) {
-  console.log('voice recognition started');
-  recognition.start();
-});
-
-
-$('#start-record-btn').on('mouseup', function(e) {
-  recognition.stop();
-  console.log('voice recognition stopped');
-
-});
-
-// Sync the text inside the text area with the content variable.
-// inputQuery.on('input', function() {
-//   content = $(this).val();
-// })
-
-
-
-/*-----------------------------
-      Speech Synthesis 
-------------------------------*/
-
-function readOutLoud(message) {
-	var speech = new SpeechSynthesisUtterance();
-
-  // Set the text and voice attributes.
-	speech.text = message;
-	speech.volume = 1;
-	speech.rate = 1;
-	speech.pitch = 1;
-  
-	window.speechSynthesis.speak(speech);
+// Text to speech
+function text_to_speech(txt) {
+    // Web Speech API - speech synthesis
+    if ('speechSynthesis' in window) {
+        // Synthesis support. Make your web apps talk!
+        console.log("음성합성을 지원하는  브라우저입니다.");
+    }
+    var msg = new SpeechSynthesisUtterance();
+    var voices = window.speechSynthesis.getVoices();
+    //msg.voice = voices[10]; // 두번째 부터 완전 외국인 발음이 됨. 사용하지 말것.
+    msg.voiceURI = 'native';
+    msg.volume = 1; // 0 to 1
+    msg.rate = 1.3; // 0.1 to 10
+    //msg.pitch = 2; //0 to 2
+    msg.text = txt;
+    msg.lang = 'ko-KR';
+    msg.onend = function (e) {
+        if (is_calling == false) {
+            recognition.start();
+        }
+        console.log('Finished in ' + event.elapsedTime + ' seconds.');
+    };
+    window.speechSynthesis.speak(msg);
 }
 
 
+/* DIALOGFLOW */
+mic = $('#mic');
+is_asking = false;
+function ask_question() {
+    mic.click();
+    is_asking = true;
+    console.log('ask started');
+}
+
+var is_response_msg = false
+$('body').on('DOMSubtreeModified', '#result', function(){
+    // is_response_msg = !is_response_msg
+    message = $('.server-response').last().text();
+    if(message.trim() === '' || message === '...' || is_response_msg) {
+        return
+    }
+    console.log(message);
+    updateVideo(message);
+});
+
+/* video */
+var avatarVideo = videojs('avatar-video');
+var listen_video = "01";
+
+var video_id = "01";
+var video_start = 0;
+var video_end = 0;
+function updateVideo(id) {
+    duration = video_info[id];
+    video_id = id;
+    video_start = duration[0];
+    video_end = duration[1];
+    avatarVideo.currentTime(video_start);
+    console.log(video_start, video_end);
+}
+
+idle_time = 0;
+avatarVideo.on('timeupdate', function(){
+    current = avatarVideo.currentTime();
+    if(video_start <= current && current <= video_end){
+        // console.log('answering question');
+    }else {
+        if(video_id.includes("02")) {
+            updateVideo("01");
+            idle_time = 0;
+            return;
+        }
+        if (video_id.includes("01")){
+            updateVideo("01");
+            if (is_asking) idle_time++;
+            if (is_asking && idle_time > 2) {
+                is_asking = false;
+                speech_to_text();
+            }
+        }else{
+            is_asking = false;
+            updateVideo(listen_video);
+            speech_to_text();
+        }
+    }
+});
+
+speech_to_text();
